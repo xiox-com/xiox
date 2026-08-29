@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Xiox — Short Videos</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --glow-color:#a855f7;
+    --glow-color-soft: color-mix(in srgb, var(--glow-color) 22%, transparent);
+    --glow-color-softer: color-mix(in srgb, var(--glow-color) 10%, transparent);
+    --glow-color-light: color-mix(in srgb, var(--glow-color) 55%, white);
+    --bg-void:#07070b;
+    --bg-surface:#101014;
+    --bg-surface-2:#16161c;
+    --bg-surface-3:#1d1d24;
+    --border-hair: rgba(255,255,255,0.08);
+  }
+  *{ -webkit-tap-highlight-color: transparent; }
+  html,body{ background:var(--bg-void); overscroll-behavior:none; }
+  body{ font-family:'Inter',system-ui,sans-serif; }
+  .font-display{ font-family:'Space Grotesk',system-ui,sans-serif; }
+
+  ::-webkit-scrollbar{ display:none; }
+  * { scrollbar-width:none; -ms-overflow-style:none; }
+
+  .glow-text{ color:var(--glow-color); text-shadow: 0 0 18px var(--glow-color-soft), 0 0 2px var(--glow-color); }
+  .glow-border{ border-color:var(--glow-color); box-shadow: 0 0 0 1px var(--glow-color-softer), 0 0 16px var(--glow-color-soft); }
+  .glow-fill{ background:var(--glow-color); box-shadow: 0 0 18px var(--glow-color-soft); }
+  .glow-ring{ box-shadow: 0 0 0 2px var(--glow-color); }
+  .glow-icon{ color:var(--glow-color); filter: drop-shadow(0 0 6px var(--glow-color-soft)); }
+  .accent-text{ color:var(--glow-color); }
+  .accent-bg-soft{ background:var(--glow-color-softer); }
+
+  .logo-pulse{
+    position:absolute; inset:-6px; border-radius:9999px;
+    background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+    opacity:.5; filter:blur(6px);
+    animation: logoPulse 2.8s ease-in-out infinite;
+  }
+  @keyframes logoPulse{
+    0%,100%{ opacity:.35; transform:scale(.9); }
+    50%{ opacity:.65; transform:scale(1.12); }
+  }
+  .xiox-wordmark{
+    background: linear-gradient(120deg, var(--glow-color-light), var(--glow-color) 60%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter: drop-shadow(0 0 10px var(--glow-color-soft));
+  }
+
+  .tab-underline{ position:relative; }
+  .tab-underline.active::after{
+    content:''; position:absolute; left:50%; bottom:-9px; transform:translateX(-50%);
+    width:5px; height:5px; border-radius:999px; background:var(--glow-color);
+    box-shadow:0 0 10px var(--glow-color), 0 0 4px var(--glow-color);
+  }
+
+  .snap-y-mandatory{ scroll-snap-type:y mandatory; }
+  .snap-start{ scroll-snap-align:start; scroll-snap-stop:always; }
+
+  .heart-pop{ animation: heartPop .38s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes heartPop{
+    0%{ transform:scale(1); }
+    35%{ transform:scale(1.35); }
+    60%{ transform:scale(.92); }
+    100%{ transform:scale(1); }
+  }
+  .fly-heart{ animation: flyHeart 900ms ease-out forwards; }
+  @keyframes flyHeart{
+    0%{ opacity:0; transform: translate(-50%,-50%) scale(.3); }
+    15%{ opacity:1; transform: translate(-50%,-50%) scale(1.15); }
+    100%{ opacity:0; transform: translate(-50%,-140%) scale(1.4) rotate(8deg); }
+  }
+
+  .sheet-enter{ animation: sheetUp .28s cubic-bezier(.2,.9,.3,1); }
+  @keyframes sheetUp{ from{ transform:translateY(100%);} to{ transform:translateY(0);} }
+  .fade-enter{ animation: fadeIn .2s ease; }
+  @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+
+  .shimmer-badge{
+    background: linear-gradient(90deg, var(--glow-color-softer), var(--glow-color-soft), var(--glow-color-softer));
+    background-size:200% 100%;
+    animation: shimmer 3s linear infinite;
+  }
+  @keyframes shimmer{ from{background-position:200% 0;} to{background-position:-200% 0;} }
+
+  input[type="color"]{ -webkit-appearance:none; appearance:none; border:none; background:none; padding:0; }
+  input[type="color"]::-webkit-color-swatch-wrapper{ padding:0; }
+  input[type="color"]::-webkit-color-swatch{ border:none; border-radius:9999px; }
+
+  .stat-card{ background:linear-gradient(160deg, var(--bg-surface-2), var(--bg-surface)); border:1px solid var(--border-hair); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  }
+
+  input:focus, textarea:focus, button:focus-visible{ outline:2px solid var(--glow-color); outline-offset:2px; }
+</style>
+<style id="xiox-premium-theme-picker">
+.xiox-theme-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.xiox-theme-card{position:relative;overflow:hidden;min-height:88px;padding:13px;border:1px solid rgba(255,255,255,.09);border-radius:18px;background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.018));cursor:pointer;text-align:left;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.xiox-theme-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.2);box-shadow:0 14px 38px rgba(0,0,0,.3)}
+.xiox-theme-card.active{border-color:var(--xiox-theme-accent);box-shadow:0 0 0 1px var(--xiox-theme-accent),0 12px 38px color-mix(in srgb,var(--xiox-theme-accent) 20%,transparent)}
+.xiox-theme-card:before{content:"";position:absolute;width:110px;height:110px;right:-35px;top:-48px;border-radius:50%;background:var(--xiox-theme-accent);filter:blur(32px);opacity:.18}
+.xiox-theme-dots{display:flex;gap:5px;position:relative;z-index:1}.xiox-theme-dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.18)}
+.xiox-theme-name{position:relative;z-index:1;margin-top:11px;font-size:12px;font-weight:750}.xiox-theme-desc{position:relative;z-index:1;margin-top:2px;font-size:10px;color:rgba(255,255,255,.43)}
+.xiox-theme-check{position:absolute;right:11px;bottom:11px;z-index:2;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--xiox-theme-accent);color:#050505;font-size:11px;font-weight:900;opacity:0;transform:scale(.7);transition:.2s}
+.xiox-theme-card.active .xiox-theme-check{opacity:1;transform:scale(1)}
+.xiox-theme-custom{margin-top:12px;padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.025)}
+@media(min-width:640px){.xiox-theme-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+</style>
+</head>
+<body class="h-screen w-full overflow-hidden text-zinc-100">
+
+<div id="app" class="relative mx-auto h-screen max-w-md flex flex-col bg-[var(--bg-void)] border-x border-white/5 overflow-hidden">
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="shrink-0 z-30 flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[var(--bg-void)]/95 backdrop-blur">
+    <div class="flex items-center gap-2">
+      <div class="relative w-7 h-7 shrink-0">
+        <div class="logo-pulse"></div>
+        <svg class="relative w-7 h-7" viewBox="0 0 28 28" fill="none">
+          <defs>
+            <linearGradient id="logoGrad" x1="2" y1="2" x2="26" y2="26" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="var(--glow-color-light)"/>
+              <stop offset="100%" stop-color="var(--glow-color)"/>
+            </linearGradient>
+          </defs>
+          <path d="M14 1.6 25.4 8v12L14 26.4 2.6 20V8Z" stroke="url(#logoGrad)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M11 9.5v9l7.5-4.5Z" fill="url(#logoGrad)"/>
+        </svg>
+      </div>
+      <span class="font-display text-xl font-bold tracking-[0.02em] xiox-wordmark">XIOX</span>
+    </div>
+    <button id="openUploadBtn" class="flex items-center gap-1.5 pl-3 pr-3.5 py-2 rounded-full text-sm font-semibold text-black transition active:scale-95 glow-fill">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      Upload
+    </button>
+  </header>
+
+  <!-- ===================== MAIN VIEW ===================== -->
+  <main id="mainView" class="relative flex-1 min-h-0">
+
+    <!-- ---------- TAB: HOME ---------- -->
+    <section id="view-home" class="tab-view h-full overflow-y-auto px-4 pt-4 pb-6 space-y-6">
+      <!-- Search -->
+      <div class="relative">
+        <svg class="w-4.5 h-4.5 w-[18px] h-[18px] absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="searchInput" type="text" placeholder="Search creators by @username"
+          class="w-full bg-[var(--bg-surface)] border border-white/10 rounded-2xl py-3 pl-10 pr-4 text-sm placeholder-zinc-500 focus:border-[var(--glow-color)] transition" />
+      </div>
+      <div id="searchResults" class="hidden -mt-3 space-y-1"></div>
+
+      <!-- Sponsor -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Featured</h2>
+          <span class="shimmer-badge text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full glow-text border border-[var(--glow-color)]/40">Promoted</span>
+        </div>
+        <div class="relative rounded-2xl overflow-hidden glow-border border">
+          <div class="aspect-video bg-black">
+            <video class="w-full h-full object-cover" src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4" muted loop playsinline autoplay></video>
+          </div>
+          <div class="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/90 to-transparent">
+            <p class="text-sm font-semibold">NovaGear — Ride the Edge</p>
+            <p class="text-xs text-zinc-400">Sponsored content · nova.gear</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div>
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Platform pulse</h2>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="stat-card rounded-2xl p-4">
+            <svg class="w-5 h-5 glow-icon mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <p id="statTotalViews" class="font-display text-2xl font-bold">0</p>
+            <p class="text-xs text-zinc-500 mt-0.5">Total views</p>
+          </div>
+          <div class="stat-card rounded-2xl p-4">
+            <svg class="w-5 h-5 glow-icon mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <p id="statCreators" class="font-display text-2xl font-bold">0</p>
+            <p class="text-xs text-zinc-500 mt-0.5">Active creators</p>
+          </div>
+          <div class="stat-card rounded-2xl p-4">
+            <svg class="w-5 h-5 glow-icon mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>
+            <p id="statTotalLikes" class="font-display text-2xl font-bold">0</p>
+            <p class="text-xs text-zinc-500 mt-0.5">Total likes</p>
+          </div>
+          <div class="stat-card rounded-2xl p-4">
+            <svg class="w-5 h-5 glow-icon mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8Z"/></svg>
+            <p id="statTotalVideos" class="font-display text-2xl font-bold">0</p>
+            <p class="text-xs text-zinc-500 mt-0.5">Shorts live</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Trending creators</h2>
+        <div id="creatorRow" class="flex gap-3 overflow-x-auto pb-1"></div>
+      </div>
+    </section>
+
+    <!-- ---------- TAB: SHORTS ---------- -->
+    <section id="view-shorts" class="tab-view hidden h-full">
+      <div id="shortsFeed" class="h-full overflow-y-auto snap-y-mandatory"></div>
+    </section>
+
+    <!-- ---------- TAB: PROFILE ---------- -->
+    <section id="view-profile" class="tab-view hidden h-full overflow-y-auto px-4 pt-5 pb-8 space-y-6">
+      <div class="flex items-center gap-4">
+        <img id="profilePfp" class="w-16 h-16 rounded-full object-cover glow-ring" src="" alt="Profile picture" />
+        <div>
+          <p id="profileUsernameDisplay" class="font-display text-lg font-bold"></p>
+          <p class="text-xs text-zinc-500">Xiox creator</p>
+        </div>
+      </div>
+
+      <form id="profileForm" class="space-y-4">
+        <div>
+          <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Minecraft username</label>
+          <input id="usernameInput" type="text" maxlength="16" placeholder="Steve_Builder"
+            class="mt-1.5 w-full bg-[var(--bg-surface)] border border-white/10 rounded-xl py-2.5 px-3.5 text-sm placeholder-zinc-600 focus:border-[var(--glow-color)] transition" />
+          <p id="usernameError" class="hidden text-xs text-red-400 mt-1.5">3–16 characters, letters/numbers/underscores only.</p>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Profile picture</label>
+          <div class="mt-1.5 flex items-center gap-3">
+            <img id="pfpPreview" src="" class="w-12 h-12 rounded-full object-cover border border-white/10 shrink-0" />
+            <label for="pfpFileInput" class="flex-1 flex items-center justify-center gap-2 border border-dashed border-white/15 rounded-xl py-3 cursor-pointer hover:border-[var(--glow-color)] transition">
+              <svg class="w-4 h-4 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 18v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+              <span id="pfpFileLabel" class="text-xs text-zinc-500">Upload a photo</span>
+            </label>
+            <input id="pfpFileInput" type="file" accept="image/*" class="hidden" />
+          </div>
+        </div>
+        <div class="flex items-start gap-2 rounded-xl border border-white/10 bg-[var(--bg-surface)] p-3">
+          <svg class="w-4 h-4 mt-0.5 shrink-0 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <p class="text-xs text-zinc-500 leading-relaxed">Username and PFP can only be updated once per month.</p>
+        </div>
+        <button type="submit" id="saveProfileBtn" class="w-full rounded-xl py-2.5 text-sm font-semibold text-black glow-fill active:scale-[.98] transition">Save changes</button>
+        <p id="profileSaveMsg" class="hidden text-xs text-center accent-text"></p>
+      </form>
+
+      <div class="border-t border-white/5 pt-5">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-3">Theme — Hex glow color</h3>
+        <div class="flex items-center gap-3">
+          <input id="colorPicker" type="color" value="#a855f7" class="w-11 h-11 rounded-full border border-white/10 cursor-pointer" />
+          <input id="hexInput" type="text" value="#a855f7" maxlength="7"
+            class="flex-1 bg-[var(--bg-surface)] border border-white/10 rounded-xl py-2.5 px-3.5 text-sm font-mono uppercase focus:border-[var(--glow-color)] transition" />
+          <button id="applyThemeBtn" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-black glow-fill active:scale-95 transition">Apply</button>
+        </div>
+        <p class="text-xs text-zinc-600 mt-2">Saved automatically to this device.</p>
+      </div>
+
+      <div id="accountSection" class="border-t border-white/5 pt-5"></div>
+
+      <div class="border-t border-white/5 pt-5">
+        <button id="adminLoginBtn" class="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold border border-white/10 text-zinc-300 hover:border-[var(--glow-color)] transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.4 8 11 4.6-2.6 8-6 8-11V5l-8-3Z"/></svg>
+          Admin login
+        </button>
+      </div>
+    </section>
+
+    <!-- ---------- TAB: ADMIN ---------- -->
+    <section id="view-admin" class="tab-view hidden h-full overflow-y-auto px-4 pt-5 pb-8 space-y-6"></section>
+
+  </main>
+
+  <!-- ===================== BOTTOM NAV ===================== -->
+  <nav class="shrink-0 z-30 border-t border-white/5 bg-[var(--bg-void)]/95 backdrop-blur px-2 pt-2 pb-[calc(0.55rem+env(safe-area-inset-bottom))]">
+    <div class="grid grid-cols-4">
+      <button data-tab="home" class="navBtn tab-underline active flex flex-col items-center gap-1 py-1 text-zinc-500 transition">
+        <svg class="w-5.5 h-5.5 w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+        <span class="text-[10px] font-medium">Home</span>
+      </button>
+      <button data-tab="shorts" class="navBtn tab-underline flex flex-col items-center gap-1 py-1 text-zinc-500 transition">
+        <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m10 9 5 3-5 3V9Z"/></svg>
+        <span class="text-[10px] font-medium">Shorts</span>
+      </button>
+      <button data-tab="profile" class="navBtn tab-underline flex flex-col items-center gap-1 py-1 text-zinc-500 transition">
+        <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span class="text-[10px] font-medium">Profile</span>
+      </button>
+      <button data-tab="admin" class="navBtn tab-underline flex flex-col items-center gap-1 py-1 text-zinc-500 transition">
+        <svg class="w-[22px] h-[22px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.4 8 11 4.6-2.6 8-6 8-11V5l-8-3Z"/></svg>
+        <span class="text-[10px] font-medium">Admin</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===================== UPLOAD MODAL ===================== -->
+  <div id="uploadModal" class="hidden absolute inset-0 z-40 flex items-end justify-center bg-black/70 fade-enter">
+    <div class="w-full max-h-[88%] overflow-y-auto rounded-t-3xl bg-[var(--bg-surface)] border-t border-white/10 p-5 sheet-enter">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-display text-lg font-bold">Upload a short</h2>
+        <button data-close="uploadModal" class="p-1.5 rounded-full hover:bg-white/5">
+          <svg class="w-5 h-5 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="flex items-start gap-2 rounded-xl border border-[var(--glow-color)]/30 bg-[var(--glow-color)]/5 p-3 mb-4">
+        <svg class="w-4 h-4 mt-0.5 shrink-0 glow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <p class="text-xs text-zinc-400 leading-relaxed">Daily upload limit: maximum 3 Shorts per day. Videos must be 45 seconds or shorter.</p>
+      </div>
+
+      <form id="uploadForm" class="space-y-4">
+        <div>
+          <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Video file</label>
+          <label for="videoFileInput" id="dropZone" class="mt-1.5 flex flex-col items-center justify-center gap-2 border border-dashed border-white/15 rounded-xl py-8 cursor-pointer hover:border-[var(--glow-color)] transition text-center">
+            <svg class="w-7 h-7 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 18v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            <span id="dropZoneText" class="text-xs text-zinc-500 px-6">Tap to select a video file (max 45s)</span>
+          </label>
+          <input id="videoFileInput" type="file" accept="video/*" class="hidden" />
+          <p id="videoError" class="hidden text-xs text-red-400 mt-1.5"></p>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Posting as</label>
+          <div class="mt-1.5 flex items-center gap-2.5 rounded-xl border border-white/10 bg-[var(--bg-surface-2)] p-2.5">
+            <img id="uploadIdentityPfp" src="" class="w-9 h-9 rounded-full object-cover" />
+            <div class="min-w-0">
+              <p id="uploadIdentityName" class="text-sm font-semibold truncate">@username</p>
+              <p class="text-[11px] text-zinc-500">From your profile settings</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Caption</label>
+          <input id="uploadCaption" type="text" maxlength="120" placeholder="Say something about this short..."
+            class="mt-1.5 w-full bg-[var(--bg-surface-2)] border border-white/10 rounded-xl py-2.5 px-3.5 text-sm placeholder-zinc-600 focus:border-[var(--glow-color)] transition" />
+        </div>
+        <p id="uploadFormMsg" class="hidden text-xs text-red-400"></p>
+        <button type="submit" class="w-full rounded-xl py-3 text-sm font-semibold text-black glow-fill active:scale-[.98] transition">Publish short</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== COMMENT SHEET ===================== -->
+  <div id="commentModal" class="hidden absolute inset-0 z-40 flex items-end justify-center bg-black/70 fade-enter">
+    <div class="w-full h-[75%] flex flex-col rounded-t-3xl bg-[var(--bg-surface)] border-t border-white/10 sheet-enter">
+      <div class="shrink-0 flex items-center justify-between px-5 py-4 border-b border-white/5">
+        <h2 class="font-display text-base font-bold"><span id="commentCountLabel">0</span> comments</h2>
+        <button data-close="commentModal" class="p-1.5 rounded-full hover:bg-white/5">
+          <svg class="w-5 h-5 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="commentList" class="flex-1 min-h-0 overflow-y-auto px-5 py-3 space-y-4"></div>
+      <form id="commentForm" class="shrink-0 flex items-center gap-2 px-4 py-3 border-t border-white/5" style="padding-bottom:calc(0.75rem + env(safe-area-inset-bottom));">
+        <img id="commentFormPfp" src="" class="w-8 h-8 rounded-full object-cover shrink-0" />
+        <input id="commentInput" type="text" placeholder="Add a comment..." maxlength="200"
+          class="flex-1 bg-[var(--bg-surface-2)] border border-white/10 rounded-full py-2.5 px-4 text-sm placeholder-zinc-600 focus:border-[var(--glow-color)] transition" />
+        <button type="submit" class="w-9 h-9 shrink-0 rounded-full flex items-center justify-center text-black glow-fill active:scale-90 transition">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="m3 3 18 9-18 9 4.5-9L3 3Z"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== ADMIN PASSCODE MODAL ===================== -->
+  <div id="passcodeModal" class="hidden absolute inset-0 z-50 flex items-center justify-center bg-black/85 fade-enter px-6">
+    <div class="w-full max-w-xs rounded-3xl bg-[var(--bg-surface)] border border-white/10 p-6">
+      <div class="flex items-center justify-between mb-1">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 glow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.4 8 11 4.6-2.6 8-6 8-11V5l-8-3Z"/></svg>
+          <h2 class="font-display text-base font-bold">Admin access</h2>
+        </div>
+        <button data-close="passcodeModal" class="p-1 rounded-full hover:bg-white/5">
+          <svg class="w-4.5 h-4.5 w-[18px] h-[18px] text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <p class="text-xs text-zinc-500 mb-4">Enter your 25-digit staff key. Google account + key are verified by the backend.</p>
+      <form id="passcodeForm" class="space-y-3">
+        <input id="passcodeInput" type="password" inputmode="numeric" placeholder="25-digit key" maxlength="25"
+          class="w-full text-center tracking-[0.5em] bg-[var(--bg-surface-2)] border border-white/10 rounded-xl py-3 text-lg font-semibold placeholder-zinc-700 focus:border-[var(--glow-color)] transition" />
+        <p id="passcodeError" class="hidden text-xs text-red-400 text-center">Incorrect passcode. Try again.</p>
+        <button type="submit" class="w-full rounded-xl py-2.5 text-sm font-semibold text-black glow-fill active:scale-[.98] transition">Unlock panel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== SIGN IN MODAL ===================== -->
+  <div id="signInModal" class="hidden absolute inset-0 z-50 flex items-center justify-center bg-black/85 fade-enter px-6">
+    <div class="w-full max-w-xs rounded-3xl bg-[var(--bg-surface)] border border-white/10 p-6 text-center">
+      <div class="flex justify-end -mt-1 -mr-1 mb-1">
+        <button data-close="signInModal" class="p-1 rounded-full hover:bg-white/5">
+          <svg class="w-[18px] h-[18px] text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="relative w-12 h-12 mx-auto mb-3">
+        <div class="logo-pulse"></div>
+        <svg class="relative w-12 h-12" viewBox="0 0 28 28" fill="none">
+          <path d="M14 1.6 25.4 8v12L14 26.4 2.6 20V8Z" stroke="url(#logoGrad)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M11 9.5v9l7.5-4.5Z" fill="url(#logoGrad)"/>
+        </svg>
+      </div>
+      <h2 class="font-display text-base font-bold mb-1">Sign in to Xiox</h2>
+      <p class="text-xs text-zinc-500 mb-5 leading-relaxed">Sign in to set up your profile, subscribe to creators, and upload shorts.</p>
+      <button id="googleSignInBtn" class="w-full flex items-center justify-center gap-2.5 rounded-xl py-2.5 text-sm font-semibold bg-white text-zinc-900 active:scale-[.98] transition">
+        <svg class="w-4.5 h-4.5 w-[18px] h-[18px]" viewBox="0 0 48 48">
+          <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.5 29.3 35.5 24 35.5c-6.4 0-11.6-5.2-11.6-11.6S17.6 12.3 24 12.3c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.5 29.3 4.5 24 4.5 13.2 4.5 4.5 13.2 4.5 24S13.2 43.5 24 43.5c10.2 0 19.4-7.4 19.4-19.5 0-1.3-.1-2.3-.3-3.5z"/>
+          <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 12.3 24 12.3c3 0 5.7 1.1 7.8 3l5.7-5.7C34 6.5 29.3 4.5 24 4.5c-7.6 0-14.1 4.3-17.7 10.2z"/>
+          <path fill="#4CAF50" d="M24 43.5c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.5-4.6 2.4-7.2 2.4-5.3 0-9.7-3.4-11.3-8.1l-6.5 5C9.8 39.1 16.4 43.5 24 43.5z"/>
+          <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1 2.9-3 5.4-5.6 7.1l6.2 5.2C39.7 37.3 43.5 31.4 43.5 24c0-1.3-.1-2.3-.3-3.5z"/>
+        </svg>
+        Continue with Google
+      </button>
+      <p class="text-[10px] text-zinc-600 mt-4">Secure Google Sign-In</p>
+    </div>
+  </div>
+
+  <!-- ===================== TOAST ===================== -->
+  <div id="toast" class="hidden absolute left-1/2 -translate-x-1/2 bottom-24 z-50 px-4 py-2.5 rounded-full bg-[var(--bg-surface-3)] border border-white/10 text-xs font-medium fade-enter"></div>
+
+</div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* ============ ICONS ============ */
+  const Icon = {
+    heart: (filled) => `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="${filled ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>`,
+    comment: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 1 1-3.6-6.7L21 4l-1 4.4A7.9 7.9 0 0 1 21 12Z"/></svg>`,
+    eye: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+    trash: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z"/></svg>`,
+    ban: `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>`,
+    mute: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M23 9 17 15M17 9l6 6"/></svg>`,
+    unmute: `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>`
+  };
+
+  /* ============ STATE ============ */
+  const LS = {
+    theme: "xiox_theme_color",
+    profile: "xiox_profile",
+    uploads: "xiox_upload_log",
+    admin: "xiox_admin_authed",
+    login: "xiox_logged_in",
+    session: "xiox_session_id",
+    google: "xiox_google_token"
+  };
+  const XIOX_API = "https://script.google.com/macros/s/AKfycbwXG0BXiqfkYzZ698n6ER7zGEhFaQ5cAYbZCfKLBlUFjY3aWv_PY-dbJqQMhMOfKMbn/exec";
+  const GOOGLE_CLIENT_ID = "671243935152-ciiolks015vnnaeaovrr227pbb9aeedg.apps.googleusercontent.com";
+  let sessionId = localStorage.getItem(LS.session) || "";
+  let googleIdToken = sessionStorage.getItem(LS.google) || "";
+
+  const VIDS = [
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+    "https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4"
+  ];
+  const avatar = (seed) => `https://api.dicebear.com/7.x/bottts-neutral/svg?seed=${encodeURIComponent(seed)}`;
+
+  function rand(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function formatCount(n){
+    if (n >= 1000000) return (n/1000000).toFixed(1).replace(/\.0$/,"") + "M";
+    if (n >= 1000) return (n/1000).toFixed(1).replace(/\.0$/,"") + "K";
+    return String(n);
+  }
+  function timeAgo(ts){
+    const s = Math.floor((Date.now() - ts) / 1000);
+    if (s < 60) return "just now";
+    if (s < 3600) return Math.floor(s/60) + "m ago";
+    if (s < 86400) return Math.floor(s/3600) + "h ago";
+    return Math.floor(s/86400) + "d ago";
+  }
+  function escapeHtml(str){
+    const d = document.createElement("div");
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  const seedNames = ["PixelForge","EmberCraft","VoidWalker_99","BlockSmith","LunarByte","ObsidianFox","RedstoneQueen","GlowMoss","ArcticNomad","ZenithOre"];
+  let shorts = seedNames.slice(0, 6).map((name, i) => ({
+    id: "s" + i,
+    creator: name,
+    pfp: avatar(name),
+    videoUrl: VIDS[i % VIDS.length],
+    caption: [
+      "Built a floating base in one night 🧱",
+      "Speedrun attempt #47 — so close",
+      "This redstone contraption took 3 days",
+      "PvP clip you didn't ask for",
+      "Exploring the deep dark alone",
+      "Rating my viewers' bases"
+    ][i],
+    views: rand(1200, 480000),
+    likes: rand(80, 32000),
+    liked: false,
+    subscribed: false,
+    subscribers: rand(200, 90000),
+    comments: [
+      { user: "MossyBlock", pfp: avatar("MossyBlock"), text: "This is insane, how long did it take?", ts: Date.now() - 1000*60*40 },
+      { user: "Cryptid_Miner", pfp: avatar("Cryptid_Miner"), text: "underrated creator fr", ts: Date.now() - 1000*60*140 }
+    ]
+  }));
+
+  let creators = seedNames.map((name) => ({ name, pfp: avatar(name), subs: rand(200, 90000) }));
+
+  let users = seedNames.map((name, i) => ({
+    username: name,
+    ip: `192.168.${rand(0,255)}.${rand(1,254)}`,
+    uploads: rand(0, 6),
+    created: Date.now() - rand(2, 400) * 86400000,
+    banned: false
+  }));
+
+  let profile = JSON.parse(localStorage.getItem(LS.profile) || "null") || {
+    username: "Steve_Builder",
+    pfp: avatar("Steve_Builder"),
+    lastUpdated: 0
+  };
+
+  let activeCommentShortId = null;
+  let adminAuthed = false;
+  let isLoggedIn = !!sessionId;
+  let pendingProfilePfp = null;
+  let signInIntent = null;
+
+  /* ============ THEME ============ */
+  function applyTheme(hex){
+    document.documentElement.style.setProperty("--glow-color", hex);
+    localStorage.setItem(LS.theme, hex);
+    document.getElementById("colorPicker").value = hex;
+    document.getElementById("hexInput").value = hex.toUpperCase();
+  }
+  function isValidHex(v){ return /^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$/.test(v); }
+  (function initTheme(){
+    const saved = localStorage.getItem(LS.theme);
+    if (saved && isValidHex(saved)) applyTheme(saved);
+    else applyTheme("#a855f7");
+  })();
+
+  /* ============ TOAST ============ */
+  let toastTimer = null;
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.remove("hidden");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.add("hidden"), 2200);
+  }
+
+  /* ============ TAB NAVIGATION ============ */
+  const tabViews = { home: "view-home", shorts: "view-shorts", profile: "view-profile", admin: "view-admin" };
+  function switchTab(tab){
+    Object.values(tabViews).forEach(id => document.getElementById(id).classList.add("hidden"));
+    document.getElementById(tabViews[tab]).classList.remove("hidden");
+    document.querySelectorAll(".navBtn").forEach(b => {
+      const on = b.dataset.tab === tab;
+      b.classList.toggle("active", on);
+      b.classList.toggle("text-zinc-500", !on);
+      b.style.color = on ? "var(--glow-color)" : "";
+    });
+    document.querySelectorAll("#shortsFeed video").forEach(v => v.pause());
+    if (tab === "shorts") {
+      const firstVisible = document.querySelector("#shortsFeed .short-item video");
+      requestAnimationFrame(() => playVisibleShort());
+    }
+    if (tab === "admin") {
+      renderAdmin();
+    }
+  }
+  document.querySelectorAll(".navBtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.dataset.tab === "admin" && !adminAuthed) {
+        openModal("passcodeModal");
+        document.getElementById("passcodeInput").focus();
+        return;
+      }
+      switchTab(btn.dataset.tab);
+    });
+  });
+
+  /* ============ MODALS ============ */
+  function openModal(id){ document.getElementById(id).classList.remove("hidden"); }
+  function closeModal(id){ document.getElementById(id).classList.add("hidden"); }
+  document.querySelectorAll("[data-close]").forEach(btn => {
+    btn.addEventListener("click", () => closeModal(btn.dataset.close));
+  });
+  [["uploadModal"],["commentModal"],["passcodeModal"],["signInModal"]].forEach(([id]) => {
+    document.getElementById(id).addEventListener("click", (e) => { if (e.target.id === id) closeModal(id); });
+  });
+  document.getElementById("openUploadBtn").addEventListener("click", () => {
+    if (!isLoggedIn) {
+      signInIntent = "upload";
+      openModal("signInModal");
+      return;
+    }
+    updateUploadIdentity();
+    openModal("uploadModal");
+  });
+
+  function updateUploadIdentity(){
+    document.getElementById("uploadIdentityPfp").src = profile.pfp;
+    document.getElementById("uploadIdentityName").textContent = "@" + profile.username;
+  }
+
+  /* ============ AUTH / XIOX V4 ============ */
+  async function api(action,data={}) {
+    const r=await fetch(XIOX_API,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify(Object.assign({action},data))
+    });
+    return await r.json();
+  }
+  function applyServerUser(u){
+    if(!u)return;
+    profile.username=u.name||profile.username;
+    profile.pfp=u.pfpUrl||profile.pfp;
+    profile.lastUsernameChange=u.lastUsernameChange||"";
+    profile.lastPfpChange=u.lastPfpChange||"";
+    localStorage.setItem(LS.profile,JSON.stringify(profile));
+    renderProfile(); updateUploadIdentity();
+  }
+  async function finishGoogleLogin(token){
+    try{
+      const r=await api("login",{idToken:token});
+      if(!r.ok)throw Error(r.error||"Google login failed.");
+      googleIdToken=token; sessionStorage.setItem(LS.google,token);
+      if(r.newUser){
+        const c=await api("createUser",{idToken:token,name:profile.username||r.google.name,pfpUrl:profile.pfp||r.google.picture});
+        if(!c.ok)throw Error(c.error||"Could not create account.");
+        r.user=c.user;r.sessionId=c.sessionId;
+      }
+      sessionId=r.sessionId;
+      localStorage.setItem(LS.session,sessionId);
+      localStorage.setItem(LS.login,"1");
+      isLoggedIn=true; applyServerUser(r.user); renderAccountSection();
+      closeModal("signInModal"); showToast("Signed in with Google.");
+      if(signInIntent==="upload"){updateUploadIdentity();openModal("uploadModal");}
+      if(signInIntent==="staff"){openModal("passcodeModal");}
+      signInIntent=null;
+    }catch(e){console.error(e);showToast(e.message||"Google login failed.");}
+  }
+  function handleGoogleSignIn(){
+    if(!window.google?.accounts?.id){showToast("Google Sign-In is still loading. Try again.");return;}
+    google.accounts.id.initialize({
+      client_id:GOOGLE_CLIENT_ID,
+      callback:r=>finishGoogleLogin(r.credential),
+      auto_select:false,
+      cancel_on_tap_outside:true
+    });
+    google.accounts.id.prompt();
+  }
+  async function restoreSession(){
+    if(!sessionId){isLoggedIn=false;renderAccountSection();return;}
+    try{
+      const r=await api("me",{sessionId});
+      if(!r.ok)throw Error();
+      isLoggedIn=true;applyServerUser(r.user);renderAccountSection();
+    }catch(_){
+      sessionId="";googleIdToken="";isLoggedIn=false;
+      localStorage.removeItem(LS.session);localStorage.removeItem(LS.login);
+      sessionStorage.removeItem(LS.google);renderAccountSection();
+    }
+  }
+  async function handleSignOut(){
+    try{if(sessionId)await api("logout",{sessionId});}catch(_){}
+    sessionId="";googleIdToken="";isLoggedIn=false;adminAuthed=false;
+    localStorage.removeItem(LS.session);localStorage.removeItem(LS.login);
+    sessionStorage.removeItem(LS.google);sessionStorage.removeItem(LS.admin);
+    renderAccountSection();showToast("Signed out.");
+  }
+  function renderAccountSection(){
+    const el=document.getElementById("accountSection");
+    if(isLoggedIn){
+      el.innerHTML=`<div class="flex items-center gap-3 rounded-xl border border-white/10 bg-[var(--bg-surface)] p-3">
+        <img src="${escapeHtml(profile.pfp)}" class="w-10 h-10 rounded-full object-cover shrink-0">
+        <div class="flex-1 min-w-0"><p class="text-sm font-semibold truncate">@${escapeHtml(profile.username)}</p><p class="text-[11px] text-zinc-500">Signed in with Google</p></div>
+        <button id="signOutBtn" class="shrink-0 text-xs font-semibold text-zinc-400 border border-white/10 rounded-lg px-3 py-1.5">Sign out</button>
+      </div>`;
+      document.getElementById("signOutBtn").onclick=handleSignOut;
+    }else{
+      el.innerHTML=`<div class="rounded-xl border border-[var(--glow-color)]/30 bg-[var(--glow-color)]/5 p-4 text-center">
+        <p class="text-sm font-semibold mb-1">You're not signed in</p>
+        <p class="text-xs text-zinc-500 mb-3.5 leading-relaxed">Sign in to save your profile, subscribe to creators, and upload shorts.</p>
+        <button id="accountGoogleBtn" class="w-full rounded-xl py-2.5 text-sm font-semibold bg-white text-zinc-900">Continue with Google</button>
+      </div>`;
+      document.getElementById("accountGoogleBtn").onclick=handleGoogleSignIn;
+    }
+  }
+  document.getElementById("googleSignInBtn").onclick=()=>handleGoogleSignIn();
+
+  /* ============ GLOBAL STATS ============ */
+  function refreshStats(){
+    const totalViews = shorts.reduce((a,s)=>a+s.views,0);
+    const totalLikes = shorts.reduce((a,s)=>a+s.likes,0);
+    document.getElementById("statTotalViews").textContent = formatCount(totalViews);
+    document.getElementById("statCreators").textContent = formatCount(new Set(shorts.map(s=>s.creator)).size);
+    document.getElementById("statTotalLikes").textContent = formatCount(totalLikes);
+    document.getElementById("statTotalVideos").textContent = formatCount(shorts.length);
+  }
+
+  function renderCreatorRow(){
+    const row = document.getElementById("creatorRow");
+    row.innerHTML = creators.map(c => `
+      <div class="flex flex-col items-center gap-1.5 shrink-0 w-16">
+        <img src="${c.pfp}" class="w-14 h-14 rounded-full object-cover border border-white/10" />
+        <span class="text-[10px] text-zinc-400 truncate w-full text-center">@${escapeHtml(c.name)}</span>
+      </div>
+    `).join("");
+  }
+
+  /* ============ SEARCH ============ */
+  const searchInput = document.getElementById("searchInput");
+  const searchResults = document.getElementById("searchResults");
+  searchInput.addEventListener("input", () => {
+    const q = searchInput.value.trim().replace(/^@/,"").toLowerCase();
+    if (!q) { searchResults.classList.add("hidden"); searchResults.innerHTML=""; return; }
+    const matches = creators.filter(c => c.name.toLowerCase().includes(q));
+    searchResults.classList.remove("hidden");
+    searchResults.innerHTML = matches.length ? matches.map(c => `
+      <div class="flex items-center gap-3 rounded-xl bg-[var(--bg-surface)] border border-white/10 p-2.5">
+        <img src="${c.pfp}" class="w-9 h-9 rounded-full object-cover" />
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium truncate">@${escapeHtml(c.name)}</p>
+          <p class="text-[11px] text-zinc-500">${formatCount(c.subs)} subscribers</p>
+        </div>
+      </div>
+    `).join("") : `<p class="text-xs text-zinc-500 px-1 py-2">No creators match "@${escapeHtml(q)}".</p>`;
+  });
+
+  /* ============ SHORTS FEED ============ */
+  const shortsFeed = document.getElementById("shortsFeed");
+
+  function shortItemHtml(s){
+    return `
+    <div class="short-item snap-start h-full w-full relative bg-black" data-id="${s.id}">
+      <video class="w-full h-full object-cover" src="${s.videoUrl}" loop muted playsinline preload="metadata"></video>
+
+      <div class="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/70 pointer-events-none"></div>
+
+      <button class="muteBtn absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-black/40 backdrop-blur flex items-center justify-center text-white">
+        ${Icon.mute}
+      </button>
+
+      <div class="likeBurstLayer absolute inset-0 pointer-events-none"></div>
+
+      <!-- right action rail -->
+      <div class="absolute right-2.5 bottom-24 z-10 flex flex-col items-center gap-5">
+        <button class="likeBtn flex flex-col items-center gap-1 text-white" aria-label="Like">
+          <span class="heartIcon ${s.liked ? "text-red-500" : ""}">${Icon.heart(s.liked)}</span>
+          <span class="likeCount text-[11px] font-semibold">${formatCount(s.likes)}</span>
+        </button>
+        <button class="commentBtn flex flex-col items-center gap-1 text-white" aria-label="Comments">
+          ${Icon.comment}
+          <span class="text-[11px] font-semibold">${formatCount(s.comments.length)}</span>
+        </button>
+        <div class="flex flex-col items-center gap-1 text-white/90">
+          ${Icon.eye}
+          <span class="text-[11px] font-semibold">${formatCount(s.views)}</span>
+        </div>
+      </div>
+
+      <!-- bottom overlay -->
+      <div class="absolute left-3 right-16 bottom-4 z-10 flex items-center gap-2.5">
+        <img src="${s.pfp}" class="w-10 h-10 rounded-full object-cover border-2" style="border-color:var(--glow-color)" />
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-bold truncate">@${escapeHtml(s.creator)}</p>
+          <p class="text-[11px] text-zinc-300 truncate">${escapeHtml(s.caption)}</p>
+          <p class="text-[10px] text-zinc-400 mt-0.5">${formatCount(s.subscribers)} subscribers</p>
+        </div>
+        <button class="subBtn shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-full transition ${s.subscribed ? 'border border-white/30 text-white' : 'text-black glow-fill'}">
+          ${s.subscribed ? "Subscribed" : "Subscribe"}
+        </button>
+      </div>
+    </div>`;
+  }
+
+  function renderShorts(){
+    shortsFeed.innerHTML = shorts.map(shortItemHtml).join("");
+    refreshStats();
+  }
+
+  function findShort(id){ return shorts.find(s => s.id === id); }
+
+  shortsFeed.addEventListener("click", (e) => {
+    const item = e.target.closest(".short-item");
+    if (!item) return;
+    const id = item.dataset.id;
+    const s = findShort(id);
+
+    if (e.target.closest(".likeBtn")) {
+      toggleLike(s, item);
+    } else if (e.target.closest(".subBtn")) {
+      toggleSubscribe(s, item);
+    } else if (e.target.closest(".commentBtn")) {
+      openComments(id);
+    } else if (e.target.closest(".muteBtn")) {
+      toggleMute(item);
+    } else if (e.target.tagName === "VIDEO") {
+      spawnHeartBurst(item);
+      toggleLike(s, item, true);
+    }
+  });
+
+  function toggleMute(item){
+    const video = item.querySelector("video");
+    video.muted = !video.muted;
+    item.querySelector(".muteBtn").innerHTML = video.muted ? Icon.mute : Icon.unmute;
+  }
+
+  function toggleLike(s, item, forceLikeOnly){
+    if (forceLikeOnly && s.liked) return;
+    s.liked = !s.liked;
+    s.likes += s.liked ? 1 : -1;
+    const btn = item.querySelector(".likeBtn");
+    const heartIcon = btn.querySelector(".heartIcon");
+    heartIcon.innerHTML = Icon.heart(s.liked);
+    heartIcon.classList.toggle("text-red-500", s.liked);
+    heartIcon.classList.remove("heart-pop");
+    void heartIcon.offsetWidth;
+    heartIcon.classList.add("heart-pop");
+    btn.querySelector(".likeCount").textContent = formatCount(s.likes);
+    refreshStats();
+  }
+
+  function spawnHeartBurst(item){
+    const layer = item.querySelector(".likeBurstLayer");
+    const heart = document.createElement("div");
+    heart.className = "fly-heart absolute";
+    heart.style.left = "50%";
+    heart.style.top = "50%";
+    heart.innerHTML = `<svg class="w-20 h-20 text-red-500 drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg>`;
+    layer.appendChild(heart);
+    setTimeout(() => heart.remove(), 900);
+  }
+
+  function toggleSubscribe(s, item){
+    s.subscribed = !s.subscribed;
+    s.subscribers += s.subscribed ? 1 : -1;
+    const btn = item.querySelector(".subBtn");
+    btn.textContent = s.subscribed ? "Subscribed" : "Subscribe";
+    btn.className = `subBtn shrink-0 text-[11px] font-bold px-3 py-1.5 rounded-full transition ${s.subscribed ? 'border border-white/30 text-white' : 'text-black glow-fill'}`;
+    item.querySelector('.absolute.left-3.right-16 p.text-\\[10px\\]').textContent = formatCount(s.subscribers) + " subscribers";
+  }
+
+  function playVisibleShort(){
+    document.querySelectorAll("#shortsFeed video").forEach(v => v.pause());
+    const items = document.querySelectorAll(".short-item");
+    const containerRect = shortsFeed.getBoundingClientRect();
+    let best = null, bestDist = Infinity;
+    items.forEach(it => {
+      const r = it.getBoundingClientRect();
+      const dist = Math.abs(r.top - containerRect.top);
+      if (dist < bestDist) { bestDist = dist; best = it; }
+    });
+    if (best) {
+      const v = best.querySelector("video");
+      v.currentTime = v.currentTime; // noop safe
+      v.play().catch(()=>{});
+      const s = findShort(best.dataset.id);
+      if (s) { s.views += 1; }
+    }
+  }
+  let scrollTimer = null;
+  shortsFeed.addEventListener("scroll", () => {
+    clearTimeout(scrollTimer);
+    scrollTimer = setTimeout(playVisibleShort, 120);
+  });
+
+  /* ============ COMMENTS ============ */
+  function openComments(shortId){
+    activeCommentShortId = shortId;
+    renderComments();
+    document.getElementById("commentFormPfp").src = profile.pfp;
+    openModal("commentModal");
+  }
+  function renderComments(){
+    const s = findShort(activeCommentShortId);
+    if (!s) return;
+    document.getElementById("commentCountLabel").textContent = formatCount(s.comments.length);
+    const list = document.getElementById("commentList");
+    if (!s.comments.length) {
+      list.innerHTML = `<p class="text-xs text-zinc-500 text-center pt-10">No comments yet. Be the first to say something.</p>`;
+      return;
+    }
+    list.innerHTML = s.comments.slice().reverse().map(c => `
+      <div class="flex gap-2.5">
+        <img src="${c.pfp}" class="w-8 h-8 rounded-full object-cover shrink-0" />
+        <div class="min-w-0">
+          <p class="text-xs"><span class="font-semibold">@${escapeHtml(c.user)}</span> <span class="text-zinc-500 ml-1">${timeAgo(c.ts)}</span></p>
+          <p class="text-sm text-zinc-200 mt-0.5 break-words">${escapeHtml(c.text)}</p>
+        </div>
+      </div>
+    `).join("");
+  }
+  document.getElementById("commentForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = document.getElementById("commentInput");
+    const text = input.value.trim();
+    if (!text) return;
+    const s = findShort(activeCommentShortId);
+    s.comments.push({ user: profile.username, pfp: profile.pfp, text, ts: Date.now() });
+    input.value = "";
+    renderComments();
+    const item = document.querySelector(`.short-item[data-id="${s.id}"] .commentBtn span:last-child`);
+    if (item) item.textContent = formatCount(s.comments.length);
+  });
+
+  /* ============ PROFILE ============ */
+  function renderProfile(){
+    document.getElementById("profilePfp").src = profile.pfp;
+    document.getElementById("profileUsernameDisplay").textContent = "@" + profile.username;
+    document.getElementById("usernameInput").value = profile.username;
+    document.getElementById("pfpPreview").src = profile.pfp;
+    document.getElementById("pfpFileLabel").textContent = "Upload a photo";
+    document.getElementById("pfpFileInput").value = "";
+    pendingProfilePfp = null;
+    renderAccountSection();
+  }
+
+  document.getElementById("pfpFileInput").addEventListener("change", () => {
+    const file = document.getElementById("pfpFileInput").files[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { showToast("Please choose an image file."); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      pendingProfilePfp = reader.result;
+      document.getElementById("pfpPreview").src = pendingProfilePfp;
+      document.getElementById("pfpFileLabel").textContent = file.name;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById("profileForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const uname = document.getElementById("usernameInput").value.trim();
+    const errEl = document.getElementById("usernameError");
+    const valid = /^[A-Za-z0-9_]{3,16}$/.test(uname);
+    if (!valid) { errEl.classList.remove("hidden"); return; }
+    errEl.classList.add("hidden");
+
+    if (!sessionId) { signInIntent="profile"; openModal("signInModal"); return; }
+    const payload={sessionId,name:uname};
+    if(pendingProfilePfp)payload.pfpUrl=pendingProfilePfp;
+    try{
+      const r=await api("updateProfile",payload);
+      if(!r.ok){showToast(r.error||"Profile update failed.");return;}
+      applyServerUser(r.user);
+    const msg = document.getElementById("profileSaveMsg");
+    msg.textContent = "Profile updated.";
+    msg.classList.remove("hidden");
+    setTimeout(() => msg.classList.add("hidden"), 2500);
+  });
+
+  /* ============ THEME CONTROLS ============ */
+  const colorPicker = document.getElementById("colorPicker");
+  const hexInput = document.getElementById("hexInput");
+  colorPicker.addEventListener("input", () => applyTheme(colorPicker.value));
+  document.getElementById("applyThemeBtn").addEventListener("click", () => {
+    const v = hexInput.value.trim();
+    if (!isValidHex(v)) { showToast("Enter a valid hex color, e.g. #A855F7"); return; }
+    applyTheme(v.startsWith("#") ? v : "#" + v);
+    showToast("Theme updated.");
+  });
+  hexInput.addEventListener("keydown", (e) => { if (e.key === "Enter") document.getElementById("applyThemeBtn").click(); });
+
+  /* ============ UPLOAD ============ */
+  const videoFileInput = document.getElementById("videoFileInput");
+  const videoError = document.getElementById("videoError");
+  const dropZoneText = document.getElementById("dropZoneText");
+  let pendingVideo = { file: null, duration: null, objectUrl: null };
+
+  videoFileInput.addEventListener("change", () => {
+    videoError.classList.add("hidden");
+    pendingVideo = { file: null, duration: null, objectUrl: null };
+    const file = videoFileInput.files[0];
+    if (!file) return;
+    if (!file.type.startsWith("video/")) {
+      videoError.textContent = "Please select a valid video file.";
+      videoError.classList.remove("hidden");
+      videoFileInput.value = "";
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    const probe = document.createElement("video");
+    probe.preload = "metadata";
+    probe.src = url;
+    probe.onloadedmetadata = () => {
+      const duration = probe.duration;
+      if (duration > 45) {
+        videoError.textContent = `This video is ${duration.toFixed(1)}s long. Shorts must be 45 seconds or under.`;
+        videoError.classList.remove("hidden");
+        dropZoneText.textContent = "Tap to select a video file (max 45s)";
+        videoFileInput.value = "";
+        URL.revokeObjectURL(url);
+        pendingVideo = { file: null, duration: null, objectUrl: null };
+        return;
+      }
+      pendingVideo = { file, duration, objectUrl: url };
+      dropZoneText.textContent = `${file.name} — ${duration.toFixed(1)}s ✓`;
+    };
+    probe.onerror = () => {
+      videoError.textContent = "Couldn't read this video file. Try another.";
+      videoError.classList.remove("hidden");
+    };
+  });
+
+  function todayKey(){
+    const d = new Date();
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  }
+  function getUploadLog(){
+    return JSON.parse(localStorage.getItem(LS.uploads) || "{}");
+  }
+  function uploadsUsedToday(){
+    const log = getUploadLog();
+    return log[todayKey()] || 0;
+  }
+  function recordUpload(){
+    const log = getUploadLog();
+    const k = todayKey();
+    log[k] = (log[k] || 0) + 1;
+    localStorage.setItem(LS.uploads, JSON.stringify(log));
+  }
+
+  document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const msg=document.getElementById("uploadFormMsg");
+    msg.classList.add("hidden");
+    if(!sessionId){closeModal("uploadModal");signInIntent="upload";openModal("signInModal");return;}
+    if(!pendingVideo.file){msg.textContent="Please select a valid video file (45s or under).";msg.classList.remove("hidden");return;}
+    msg.textContent="Video storage is not connected yet. The selected file is only a local preview; a permanent HTTPS storage URL is required before it can be published.";
+    msg.classList.remove("hidden");
+  });
+
+  /* ============ STAFF / ADMIN ============ */
+  async function staffLogin(){
+    const key=document.getElementById("passcodeInput").value.trim(),er=document.getElementById("passcodeError");
+    if(!googleIdToken){er.textContent="Sign in with Google first.";er.classList.remove("hidden");return;}
+    if(!key){er.textContent="Enter your 25-digit staff key.";er.classList.remove("hidden");return;}
+    try{
+      const r=await api("staffLogin",{idToken:googleIdToken,key});
+      if(!r.ok){er.textContent=r.error||"Staff login failed.";er.classList.remove("hidden");return;}
+      sessionId=r.sessionId;localStorage.setItem(LS.session,sessionId);adminAuthed=true;
+      sessionStorage.setItem(LS.admin,"1");er.classList.add("hidden");
+      document.getElementById("passcodeInput").value="";closeModal("passcodeModal");switchTab("admin");renderAdmin();
+    }catch(_){er.textContent="Backend connection failed.";er.classList.remove("hidden");}
+  }
+  document.getElementById("adminLoginBtn").onclick=()=>{
+    if(!isLoggedIn){signInIntent="staff";openModal("signInModal");return;}
+    openModal("passcodeModal");
+  };
+  document.getElementById("passcodeForm").onsubmit=e=>{e.preventDefault();staffLogin();};
+
+  async function renderAdmin(){
+    const view=document.getElementById("view-admin");
+    view.innerHTML=`<div class="flex items-center justify-between"><h2 class="font-display text-lg font-bold">XIOX Staff Panel</h2><span class="text-[10px] uppercase accent-text">Backend</span></div>
+      <div id="staffStats" class="grid grid-cols-2 gap-3"></div>
+      <div><h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-2">Pending Shorts</h3><div id="pendingStaffList" class="space-y-2"></div></div>
+      <div id="adminOnlyArea"></div>
+      <button id="staffLogoutBtn" class="w-full rounded-xl py-2.5 text-sm font-semibold border border-white/10 text-zinc-400">Log out of staff</button>`;
+    const st=await api("stats",{sessionId});
+    if(!st.ok){adminAuthed=false;showToast(st.error||"Staff session expired.");return;}
+    document.getElementById("staffStats").innerHTML=`
+      <div class="stat-card rounded-2xl p-4"><p class="text-xs text-zinc-500">Users</p><p class="font-display text-2xl font-bold mt-1">${formatCount(st.users)}</p></div>
+      <div class="stat-card rounded-2xl p-4"><p class="text-xs text-zinc-500">Shorts</p><p class="font-display text-2xl font-bold mt-1">${formatCount(st.shorts)}</p></div>
+      <div class="stat-card rounded-2xl p-4"><p class="text-xs text-zinc-500">Views</p><p class="font-display text-2xl font-bold mt-1">${formatCount(st.totalViews)}</p></div>
+      <div class="stat-card rounded-2xl p-4"><p class="text-xs text-zinc-500">Pending</p><p class="font-display text-2xl font-bold mt-1">${formatCount(st.pending)}</p></div>`;
+    const p=await api("pendingShorts",{sessionId}),list=document.getElementById("pendingStaffList");
+    list.innerHTML=(p.ok?p.shorts:[]).map(v=>`<div class="rounded-xl bg-[var(--bg-surface)] border border-white/10 p-3"><div class="flex items-center gap-3"><video src="${escapeHtml(v.videoUrl)}" class="w-16 h-10 rounded-lg object-cover bg-black" muted></video><div class="flex-1 min-w-0"><p class="text-xs font-semibold truncate">@${escapeHtml(v.creator)}</p><p class="text-[11px] text-zinc-500 truncate">${escapeHtml(v.caption||"")}</p></div></div><div class="flex gap-2 mt-3"><button data-a="${escapeHtml(v.id)}" class="flex-1 rounded-lg py-2 text-xs font-semibold glow-fill text-black">Approve</button><button data-r="${escapeHtml(v.id)}" class="flex-1 rounded-lg py-2 text-xs font-semibold border border-red-400/30 text-red-400">Reject</button></div></div>`).join("")||`<p class="text-xs text-zinc-500">No pending Shorts.</p>`;
+    list.querySelectorAll("[data-a]").forEach(btn=>btn.onclick=async()=>{let r=await api("approveShort",{sessionId,id:btn.dataset.a});showToast(r.ok?"Short approved.":r.error||"Failed.");renderAdmin();});
+    list.querySelectorAll("[data-r]").forEach(btn=>btn.onclick=async()=>{let r=await api("rejectShort",{sessionId,id:btn.dataset.r});showToast(r.ok?"Short rejected.":r.error||"Failed.");renderAdmin();});
+    document.getElementById("adminOnlyArea").innerHTML=`<div class="rounded-2xl border border-white/10 bg-[var(--bg-surface)] p-4"><p class="text-xs text-zinc-400">Admin-only controls are enforced by the backend.</p><button id="loadUsersBtn" class="mt-3 w-full rounded-xl py-2.5 text-xs font-semibold border border-white/10">Load users</button><div id="staffUsers" class="mt-3 space-y-2"></div></div>`;
+    document.getElementById("loadUsersBtn").onclick=async()=>{let r=await api("users",{sessionId}),box=document.getElementById("staffUsers");if(!r.ok){box.textContent=r.error||"Forbidden";return;}box.innerHTML=r.users.map(u=>`<div class="flex items-center gap-2 rounded-lg border border-white/10 p-2"><img src="${escapeHtml(u.pfpUrl||"")}" class="w-8 h-8 rounded-full object-cover"><div class="flex-1 min-w-0"><p class="text-xs truncate">${escapeHtml(u.name)}</p><p class="text-[10px] text-zinc-500 truncate">${escapeHtml(u.email)}</p></div><button data-ban="${escapeHtml(u.userId)}" class="text-[10px] text-red-400">Ban</button></div>`).join("");box.querySelectorAll("[data-ban]").forEach(btn=>btn.onclick=async()=>{let z=await api("banUser",{sessionId,userId:btn.dataset.ban});showToast(z.ok?"User banned.":z.error||"Failed.");renderAdmin();});};
+    document.getElementById("staffLogoutBtn").onclick=async()=>{await handleSignOut();switchTab("home");};
+  }
+
+  /* ============ INIT ============ */
+  renderProfile();
+  renderCreatorRow();
+  renderShorts();
+  restoreSession();
+  refreshStats();
+  switchTab("home");
+})();
+</script>
+<script id="xiox-premium-theme-js">
+(function(){
+const themes={crimson:"#ff3158",violet:"#a970ff",aether:"#35d9ff",emerald:"#38e59a",champagne:"#f5c451",ice:"#8db7ff"};
+function applyPremiumTheme(name,custom){const accent=custom||themes[name]||themes.crimson;document.documentElement.style.setProperty("--glow-color",accent);document.documentElement.style.setProperty("--xiox-theme-accent",accent);document.querySelectorAll(".xiox-theme-card").forEach(c=>c.classList.toggle("active",!custom&&c.dataset.theme===name));const p=document.getElementById("customThemeColor");if(p&&custom)p.value=accent;localStorage.setItem("xiox_theme_color",custom?"custom":name);if(custom)localStorage.setItem("xiox_custom_theme_color",accent);}
+function init(){const saved=localStorage.getItem("xiox_theme_color")||"crimson";if(saved==="custom")applyPremiumTheme("crimson",localStorage.getItem("xiox_custom_theme_color")||"#a855f7");else applyPremiumTheme(saved);document.querySelectorAll(".xiox-theme-card").forEach(c=>c.addEventListener("click",()=>applyPremiumTheme(c.dataset.theme)));const p=document.getElementById("customThemeColor");if(p)p.addEventListener("input",()=>applyPremiumTheme("crimson",p.value));}
+document.readyState==="loading"?document.addEventListener("DOMContentLoaded",init):init();
+})();
+</script>
+</body>
+</html>
